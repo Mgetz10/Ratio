@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { allIngredients, colorMap } from '../../globals/constants';
+import { slug } from '../../globals/helpers';
 
 export const StyleRatioComparison = styled.div`
 	margin-left: 1rem;
@@ -25,7 +26,7 @@ export const StyleRatioComparison = styled.div`
 			padding: 0.25rem 0.7rem;
 			text-transform: capitalize;
 			${allIngredients.map(
-				ing => `&.${ing} {
+				ing => `&.${slug(ing)} {
 				background: ${colorMap(ing)}
 			}`
 			)};

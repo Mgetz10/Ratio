@@ -36,3 +36,5 @@ export const sortRatiosBy: SortRatiosBy = (ratios, sortBy) =>
 				}
 			);
 		});
+
+export const slug = (string: string) => string.split(' ').join('-');

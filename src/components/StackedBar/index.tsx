@@ -2,6 +2,7 @@ import { scaleBand, scaleLinear, select, SeriesPoint, stack } from 'd3';
 import { useEffect, useRef } from 'react';
 import { StackedBarProps } from './types';
 import { colorMap } from '../../globals/constants';
+import { Ingredients } from '../../globals/types';
 
 const StackedBar = ({ ratio }: StackedBarProps) => {
 	const width = 100;
@@ -50,7 +51,7 @@ const StackedBar = ({ ratio }: StackedBarProps) => {
 			// Enter in the stack data = loop key per key = group per group
 			.data(stackedData)
 			.join('g')
-			.attr('fill', ({ key }) => colorMap(key) as string);
+			.attr('fill', ({ key }) => colorMap(key as Ingredients));
 
 		blocks
 			.selectAll('rect')

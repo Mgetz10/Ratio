@@ -6,18 +6,21 @@ Project Description
 
 ### Todo
 
-- [ ] Make 'To Ratio' Functions
-- [ ] Add 'Sort By' Feature
-- [ ] Add Pie
-- [ ] Add More Ratio Data
-- [ ] Color/Ing Map
-- [ ] Add testing for d3 components
+- [ ] Make 'To Ratio' Functions  
+- [ ] Add Pie  
+- [ ] Add More Ratio Data  
+- [ ] Add testing for d3 components  
 
 ### In Progress
 
+- [ ] side ways stacked bar  
+
 ### Done ✓
 
-- [x] Remove extra space from stacked bar
-- [x] Add flex box to ratio comparison
-- [x] Refactor/Simplify Bar Code
-- [x] Add Ingredient and name and amount Inside bar + remove axis
+- [x] Remove extra space from stacked bar  
+- [x] Add flex box to ratio comparison  
+- [x] Refactor/Simplify Bar Code  
+- [x] Add Ingredient and name and amount Inside bar + remove axis  
+- [x] Add 'Sort By' Feature  
+- [x] Color/Ing Map  
+

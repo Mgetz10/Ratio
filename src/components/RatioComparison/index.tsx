@@ -2,7 +2,7 @@ import StackedBar from '../StackedBar';
 import { RatioComparisonProps } from './types';
 import { StyleRatioComparison } from './styles';
 import { Ingredients, Ratio } from '../../globals/types';
-import { sortRatiosBy } from '../../globals/helpers';
+import { sortRatiosBy, slug } from '../../globals/helpers';
 import { useMemo, useState } from 'react';
 import { allIngredients } from '../../globals/constants';
 import { cloneDeep } from 'lodash';
@@ -41,7 +41,11 @@ const SortButtons = ({
 		<div className="sort-buttons">
 			<span>Sort by:</span>
 			{allIngredients.map(ing => (
-				<button className={ing} key={ing} onClick={() => ingredientSort(ing)}>
+				<button
+					className={slug(ing)}
+					key={ing}
+					onClick={() => ingredientSort(ing)}
+				>
 					{ing}
 				</button>
 			))}

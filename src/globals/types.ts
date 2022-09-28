@@ -1,12 +1,13 @@
 export enum Ingredients {
 	FLOUR = 'flour',
-	WATER = 'water',
-	EGG = 'egg',
-	FAT = 'fat',
-	LIQUID = 'liquid',
 	SUGAR = 'sugar',
+	WATER = 'water',
+	LIQUID = 'liquid',
+	FAT = 'fat',
 	BUTTER = 'butter',
-	EGG_WHITE = 'egg white'
+	EGG = 'egg',
+	EGG_WHITE = 'egg white',
+	EGG_YOLK = 'egg yolk'
 }
 
 export type Ratio = {
