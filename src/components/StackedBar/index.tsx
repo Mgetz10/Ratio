@@ -5,8 +5,8 @@ import { colorMap } from '../../globals/constants';
 import { Ingredients } from '../../globals/types';
 
 const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
-	const width = sideways ? 900 : 100;
-	const height = sideways ? 35 : 300;
+	const width = sideways ? 1200 : 120;
+	const height = sideways ? 42 : 340;
 
 	const svgRef = useRef(null);
 	useEffect(() => {
@@ -29,18 +29,12 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 			.domain([0, max])
 			.range([sideways ? width : height, 0]);
 
-		// Add X scale
-		// const x = sideways ? barLength : barWidth;
-
-		// Add Y scale
-		// const y = sideways ? barWidth : barLength;
-
 		//stack the data? --> stack per subgroup
 		const stackedData = stack().keys(subgroups)([
 			ratio.reduce(
 				(obj, { name, amount }) => Object.assign(obj, { [name]: amount }),
 				{}
-			)
+			),
 		]);
 		type SeriesPointWithName = SeriesPoint<{
 			[key: string]: number;
@@ -82,30 +76,36 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 		type D3SeriesPoint = SeriesPoint<{
 			[key: string]: number;
 		}>;
-		const textY = sideways
-			? barWidth.bandwidth() / 2
-			: (d: D3SeriesPoint) =>
-					barLength(d[1]) + (barLength(d[0]) - barLength(d[1])) / 2 - lineSpace;
-		const textX = sideways
-			? (d: D3SeriesPoint) =>
-					barLength(d[1]) + (barLength(d[0]) - barLength(d[1])) / 2 - lineSpace
-			: barWidth.bandwidth() / 2;
+		const textY = (spaceUp: boolean) =>
+			sideways
+				? barWidth.bandwidth() / 2 + (spaceUp ? lineSpace * -1 : lineSpace)
+				: (d: D3SeriesPoint) =>
+						barLength(d[1]) +
+						(barLength(d[0]) - barLength(d[1])) / 2 +
+						(spaceUp ? lineSpace * -1 : lineSpace);
+		const textX = (spaceUp: boolean) =>
+			sideways
+				? (d: D3SeriesPoint) =>
+						barLength(d[1]) + (barLength(d[0]) - barLength(d[1])) / 2
+				: barWidth.bandwidth() / 2;
 		textGroup
 			.join('text')
 			.text(d => (d as SeriesPointWithName).name)
-			.attr('y', textY)
-			.attr('x', textX)
+			.attr('y', textY(true))
+			.attr('x', textX(true))
 			.attr('dominant-baseline', 'auto')
 			.style('text-anchor', 'middle')
 			.style('font-size', fontSize)
+			.attr('font-weight', 'bold')
 			.style('text-transform', 'capitalize')
 			.style('fill', 'white');
 
 		textGroup
 			.join('text')
 			.text(d => `${d[1] - d[0]} Parts`)
-			.attr('y', textY)
-			.attr('x', textX)
+			.attr('y', textY(false))
+			.attr('x', textX(false))
+			.attr('font-weight', 'bold')
 			.attr('dominant-baseline', 'hanging')
 			.style('text-anchor', 'middle')
 			.style('font-size', fontSize)

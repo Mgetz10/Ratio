@@ -12,10 +12,10 @@ Project Description
 
 ### In Progress
 
-- [ ] Add Pie  
 
 ### Done ✓
 
+- [x] Add Pie  
 - [x] Remove extra space from stacked bar  
 - [x] side ways stacked bar  
 - [x] Add flex box to ratio comparison  

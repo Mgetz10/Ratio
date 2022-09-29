@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { allIngredients, colorMap } from '../../globals/constants';
 import { slug } from '../../globals/helpers';
+import { Ingredients } from '../../globals/types';
 
 export const StyleRatioComparison = styled.div`
 	margin-left: 1rem;
@@ -14,6 +15,7 @@ export const StyleRatioComparison = styled.div`
 			text-align: center;
 			.label {
 				text-transform: capitalize;
+				font-weight: 500;
 			}
 		}
 		&.stacked-bar-sideways .ratio {
@@ -30,6 +32,25 @@ export const StyleRatioComparison = styled.div`
 		&.stacked-bar .ratio {
 			flex: 5rem 0 0;
 		}
+		&.pie {
+			gap: 1rem;
+			.ratio {
+				position: relative;
+				.label {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					width: 25%;
+					font-size: 0.9rem;
+					color: black; // ${colorMap(Ingredients.LIQUID)};
+					font-weight: 600;
+					background: white;
+					padding: 0.3rem 0;
+					border-radius: 0.3rem;
+				}
+			}
+		}
 	}
 	.sort-buttons {
 		display: flex;
@@ -38,6 +59,7 @@ export const StyleRatioComparison = styled.div`
 		align-items: center;
 		button {
 			cursor: pointer;
+			white-space: nowrap;
 			color: white;
 			font-size: 1.2rem;
 			border: 0.1rem solid transparent;

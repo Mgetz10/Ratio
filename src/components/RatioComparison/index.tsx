@@ -13,7 +13,7 @@ import PieChart from '../PieChart/index';
 
 const RatioComparison = ({ ratios }: RatioComparisonProps) => {
 	const [sortBy, setSortBy] = useState<Ingredients>();
-	const [ratioStyle, setRatioStyle] = useState(RatioStyle.STACKED_BAR);
+	const [ratioStyle, setRatioStyle] = useState(RatioStyle.PIE);
 
 	const sortedRatios = sortBy
 		? sortRatiosBy(ratios, sortBy, ratioStyle)
