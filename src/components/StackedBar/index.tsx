@@ -4,9 +4,9 @@ import { StackedBarProps } from './types';
 import { colorMap } from '../../globals/constants';
 import { Ingredients } from '../../globals/types';
 
-const StackedBar = ({ ratio }: StackedBarProps) => {
-	const width = 100;
-	const height = 300;
+const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
+	const width = sideways ? 900 : 100;
+	const height = sideways ? 35 : 300;
 
 	const svgRef = useRef(null);
 	useEffect(() => {
@@ -14,19 +14,26 @@ const StackedBar = ({ ratio }: StackedBarProps) => {
 			.attr('width', width)
 			.attr('height', height)
 			.append('g');
-		console.log('new?');
+
 		// List of subgroups = header of the csv files = soil condition here
 		const subgroups = ratio.map(({ name }) => name);
 
 		// List of groups = species here = value of the first column called group -> I show them on the X axis
 		const groups = ['name'];
 
+		const max = ratio.map(({ amount }) => amount).reduce((a, c) => a + c);
+		const barWidth = scaleBand()
+			.domain(groups)
+			.range([0, sideways ? height : width]);
+		const barLength = scaleLinear()
+			.domain([0, max])
+			.range([sideways ? width : height, 0]);
+
 		// Add X scale
-		const x = scaleBand().domain(groups).range([0, width]);
+		// const x = sideways ? barLength : barWidth;
 
 		// Add Y scale
-		const max = ratio.map(({ amount }) => amount).reduce((a, c) => a + c);
-		const y = scaleLinear().domain([0, max]).range([height, 0]);
+		// const y = sideways ? barWidth : barLength;
 
 		//stack the data? --> stack per subgroup
 		const stackedData = stack().keys(subgroups)([
@@ -58,19 +65,36 @@ const StackedBar = ({ ratio }: StackedBarProps) => {
 			// enter a second time = loop subgroup per subgroup to add all rectangles
 			.data(d => d)
 			.join('rect')
-			.attr('y', d => y(d[1]))
-			.attr('height', d => y(d[0]) - y(d[1]))
-			.attr('width', x.bandwidth());
+			.attr('y', sideways ? '0' : d => barLength(d[1]))
+			.attr('x', sideways ? d => barLength(d[1]) : '0')
+			.attr(
+				'height',
+				sideways ? barWidth.bandwidth() : d => barLength(d[0]) - barLength(d[1])
+			)
+			.attr(
+				'width',
+				sideways ? d => barLength(d[0]) - barLength(d[1]) : barWidth.bandwidth()
+			);
 
 		const textGroup = blocks.selectAll('text').data(d => d);
 		const lineSpace = 2;
 		const fontSize = '0.8rem';
-
+		type D3SeriesPoint = SeriesPoint<{
+			[key: string]: number;
+		}>;
+		const textY = sideways
+			? barWidth.bandwidth() / 2
+			: (d: D3SeriesPoint) =>
+					barLength(d[1]) + (barLength(d[0]) - barLength(d[1])) / 2 - lineSpace;
+		const textX = sideways
+			? (d: D3SeriesPoint) =>
+					barLength(d[1]) + (barLength(d[0]) - barLength(d[1])) / 2 - lineSpace
+			: barWidth.bandwidth() / 2;
 		textGroup
 			.join('text')
 			.text(d => (d as SeriesPointWithName).name)
-			.attr('y', d => y(d[1]) + (y(d[0]) - y(d[1])) / 2 - lineSpace)
-			.attr('x', x.bandwidth() / 2)
+			.attr('y', textY)
+			.attr('x', textX)
 			.attr('dominant-baseline', 'auto')
 			.style('text-anchor', 'middle')
 			.style('font-size', fontSize)
@@ -80,8 +104,8 @@ const StackedBar = ({ ratio }: StackedBarProps) => {
 		textGroup
 			.join('text')
 			.text(d => `${d[1] - d[0]} Parts`)
-			.attr('y', d => y(d[1]) + (y(d[0]) - y(d[1])) / 2 + lineSpace)
-			.attr('x', x.bandwidth() / 2)
+			.attr('y', textY)
+			.attr('x', textX)
 			.attr('dominant-baseline', 'hanging')
 			.style('text-anchor', 'middle')
 			.style('font-size', fontSize)
@@ -90,7 +114,7 @@ const StackedBar = ({ ratio }: StackedBarProps) => {
 		return () => {
 			svg.remove();
 		};
-	}, [ratio]);
+	}, [ratio, sideways]);
 
 	return (
 		<div>

@@ -1,5 +1,6 @@
 import { ascending } from 'd3';
 import { cloneDeep } from 'lodash';
+import { RatioStyle } from '../components/RatioComparison/types';
 import { Ingredients, Ratio } from './types';
 
 type GetIngredientAmount = (ratio: Ratio, ingredient: Ingredients) => number;
@@ -15,10 +16,16 @@ export const getIngredientPercentage: GetIngredientAmount = (
 	return amount / total;
 };
 
-type SortRatiosBy = (ratios: Ratio[], sortBy: Ingredients) => Ratio[];
+type SortRatiosBy = (
+	ratios: Ratio[],
+	sortBy: Ingredients,
+	ratioStyle: RatioStyle
+) => Ratio[];
 
-export const sortRatiosBy: SortRatiosBy = (ratios, sortBy) =>
-	cloneDeep(ratios)
+export const sortRatiosBy: SortRatiosBy = (ratios, sortBy, ratioStyle) => {
+	const invert = ratioStyle === RatioStyle.STACKED_BAR_SIDEWAYS;
+
+	return cloneDeep(ratios)
 		.sort(
 			(a, b) =>
 				getIngredientPercentage(b, sortBy) - getIngredientPercentage(a, sortBy)
@@ -26,15 +33,23 @@ export const sortRatiosBy: SortRatiosBy = (ratios, sortBy) =>
 		.map(r => {
 			const sortedRatio = r.ratio
 				.sort((a, b) => ascending(a.name, b.name))
-				.sort((a, b) => (a.name === sortBy ? -1 : b.name === sortBy ? 1 : 0));
+				.sort((a, b) => {
+					const direction = (invert: boolean) => (invert ? 1 : -1);
+					return a.name === sortBy
+						? direction(invert)
+						: b.name === sortBy
+						? direction(!invert)
+						: 0;
+				});
 
 			return Object.assign(
 				{},
 				{
 					...r,
-					ratio: sortedRatio
+					ratio: sortedRatio,
 				}
 			);
 		});
+};
 
 export const slug = (string: string) => string.split(' ').join('-');

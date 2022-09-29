@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import RatioComparison from './components/RatioComparison';
 import { ratios } from './data/ratios';
 

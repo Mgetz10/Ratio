@@ -1,6 +1,5 @@
 import { Ingredient } from '../../globals/types';
 
-export interface StackedBarProps {
+export interface PieChartProps {
 	ratio: Ingredient[];
-	sideways?: boolean;
 }
