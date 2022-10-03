@@ -1,5 +1,5 @@
-import { Ingredient } from '../../globals/types';
+import { RatioIngredient } from '../../globals/types';
 
 export interface PieChartProps {
-	ratio: Ingredient[];
+	formula: RatioIngredient[];
 }

@@ -2,26 +2,26 @@ import { scaleBand, scaleLinear, select, SeriesPoint, stack } from 'd3';
 import { useEffect, useRef } from 'react';
 import { StackedBarProps } from './types';
 import { colorMap } from '../../globals/constants';
-import { Ingredients } from '../../globals/types';
+import { Ingredient } from '../../globals/types';
 
-const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
-	const width = sideways ? 1200 : 120;
-	const height = sideways ? 42 : 340;
-
+const StackedBar = ({ formula, sideways }: StackedBarProps) => {
 	const svgRef = useRef(null);
 	useEffect(() => {
+		const width = sideways ? 1200 : 120;
+		const height = sideways ? 42 : 340;
+
 		const svg = select(svgRef.current)
 			.attr('width', width)
 			.attr('height', height)
 			.append('g');
 
 		// List of subgroups = header of the csv files = soil condition here
-		const subgroups = ratio.map(({ name }) => name);
+		const subgroups = formula.map(({ ingredient }) => ingredient);
 
 		// List of groups = species here = value of the first column called group -> I show them on the X axis
-		const groups = ['name'];
+		const groups = ['ingredient'];
 
-		const max = ratio.map(({ amount }) => amount).reduce((a, c) => a + c);
+		const max = formula.map(({ amount }) => amount).reduce((a, c) => a + c);
 		const barWidth = scaleBand()
 			.domain(groups)
 			.range([0, sideways ? height : width]);
@@ -31,18 +31,19 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 
 		//stack the data? --> stack per subgroup
 		const stackedData = stack().keys(subgroups)([
-			ratio.reduce(
-				(obj, { name, amount }) => Object.assign(obj, { [name]: amount }),
+			formula.reduce(
+				(obj, { ingredient, amount }) =>
+					Object.assign(obj, { [ingredient]: amount }),
 				{}
 			),
 		]);
 		type SeriesPointWithName = SeriesPoint<{
 			[key: string]: number;
-		}> & { name: string };
+		}> & { ingredient: string };
 
 		stackedData.forEach(ingArr =>
 			ingArr.forEach(coors => {
-				(coors as SeriesPointWithName).name = ingArr.key;
+				(coors as SeriesPointWithName).ingredient = ingArr.key;
 			})
 		);
 
@@ -52,7 +53,7 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 			// Enter in the stack data = loop key per key = group per group
 			.data(stackedData)
 			.join('g')
-			.attr('fill', ({ key }) => colorMap(key as Ingredients));
+			.attr('fill', ({ key }) => colorMap(key as Ingredient));
 
 		blocks
 			.selectAll('rect')
@@ -90,7 +91,7 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 				: barWidth.bandwidth() / 2;
 		textGroup
 			.join('text')
-			.text(d => (d as SeriesPointWithName).name)
+			.text(d => (d as SeriesPointWithName).ingredient)
 			.attr('y', textY(true))
 			.attr('x', textX(true))
 			.attr('dominant-baseline', 'auto')
@@ -114,7 +115,7 @@ const StackedBar = ({ ratio, sideways }: StackedBarProps) => {
 		return () => {
 			svg.remove();
 		};
-	}, [ratio, sideways]);
+	}, [formula, sideways]);
 
 	return (
 		<div>

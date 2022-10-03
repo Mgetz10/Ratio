@@ -1,24 +1,26 @@
 import styled from 'styled-components';
 import { allIngredients, colorMap } from '../../globals/constants';
 import { slug } from '../../globals/helpers';
-import { Ingredients } from '../../globals/types';
+import { Ingredient } from '../../globals/types';
 
-export const StyleRatioComparison = styled.div`
+export const StyleFormulaComparison = styled.div`
 	margin-left: 1rem;
-	.ratios {
+	.formulas {
 		display: flex;
 		justify-content: flex-start;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 
-		.ratio {
+		.formula {
 			text-align: center;
 			.label {
 				text-transform: capitalize;
 				font-weight: 500;
+				border: 0.1rem solid black;
+				border-radius: 0.3rem;
 			}
 		}
-		&.stacked-bar-sideways .ratio {
+		&.stacked-bar-sideways .formula {
 			min-width: 60rem;
 			display: flex;
 			gap: 0.5rem;
@@ -26,15 +28,23 @@ export const StyleRatioComparison = styled.div`
 			flex-direction: row-reverse;
 			.label {
 				width: 8rem;
-				text-align: right;
+				/* text-align: right; */
+				padding: 0.5rem 0.2rem 0.5rem 0;
 			}
 		}
-		&.stacked-bar .ratio {
+		&.stacked-bar .formula {
 			flex: 5rem 0 0;
+			gap: 0rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: start;
+			.label {
+				padding: 0.3rem;
+			}
 		}
 		&.pie {
 			gap: 1rem;
-			.ratio {
+			.formula {
 				position: relative;
 				.label {
 					position: absolute;
@@ -43,11 +53,10 @@ export const StyleRatioComparison = styled.div`
 					transform: translate(-50%, -50%);
 					width: 25%;
 					font-size: 0.9rem;
-					color: black; // ${colorMap(Ingredients.LIQUID)};
+					color: black; // ${colorMap(Ingredient.LIQUID)};
 					font-weight: 600;
 					background: white;
 					padding: 0.3rem 0;
-					border-radius: 0.3rem;
 				}
 			}
 		}

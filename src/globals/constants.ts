@@ -1,19 +1,13 @@
-import {
-	scaleOrdinal,
-	schemeAccent,
-	schemeCategory10,
-	schemeSet1,
-	schemeSet2
-} from 'd3';
-import { Ingredients } from './types';
+import { scaleOrdinal, schemeSet2 } from 'd3';
+import { Ingredient } from './types';
 
-export const allIngredients = Object.values(Ingredients);
+export const allIngredients = Object.values(Ingredient);
 
 const presetColor: string | any = {
-	[Ingredients.WATER]: '#30bced'
+	[Ingredient.WATER]: '#30bced',
 };
 
-export const colorMap = (ingredient: Ingredients) => {
+export const colorMap = (ingredient: Ingredient) => {
 	const unsetIngredientColors = allIngredients.filter(
 		ing => !Object.keys(presetColor).includes(ing)
 	);

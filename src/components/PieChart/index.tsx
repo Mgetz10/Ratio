@@ -3,7 +3,7 @@ import { arc as d3Arc, InternSet, pie as d3Pie, range, select } from 'd3';
 import { PieChartProps } from './types';
 import { colorMap } from '../../globals/constants';
 
-const PieChart = ({ ratio }: PieChartProps) => {
+const PieChart = ({ formula }: PieChartProps) => {
 	const svgRef = useRef(null);
 
 	const width = 260;
@@ -17,8 +17,8 @@ const PieChart = ({ ratio }: PieChartProps) => {
 	const strokeWidth = 3;
 	const strokeLinejoin = 'round';
 	useEffect(() => {
-		const N = ratio.map(({ name }) => name);
-		const V = ratio.map(({ amount }) => amount);
+		const N = formula.map(({ ingredient: name }) => name);
+		const V = formula.map(({ amount }) => amount);
 		const I = range(N.length).filter(i => !isNaN(V[i]));
 
 		const title = (i: number) => `${N[i]}\n${V[i]} Parts`;
@@ -76,7 +76,7 @@ const PieChart = ({ ratio }: PieChartProps) => {
 		return () => {
 			svg.selectAll('g').remove();
 		};
-	}, [ratio]);
+	}, [formula]);
 
 	return (
 		<div>

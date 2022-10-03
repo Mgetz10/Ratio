@@ -6,12 +6,14 @@ Project Description
 
 ### Todo
 
+- [ ] Diff charts  
 - [ ] Make 'To Ratio' Functions  
 - [ ] Add More Ratio Data  
 - [ ] Add testing for d3 components  
 
 ### In Progress
 
+- [ ] Handle multiple formula types  
 
 ### Done ✓
 

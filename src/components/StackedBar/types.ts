@@ -1,6 +1,6 @@
-import { Ingredient } from '../../globals/types';
+import { RatioIngredient } from '../../globals/types';
 
 export interface StackedBarProps {
-	ratio: Ingredient[];
+	formula: RatioIngredient[];
 	sideways?: boolean;
 }
