@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] Transitions  
 - [ ] Diff charts  
 - [ ] Make 'To Ratio' Functions  
 - [ ] Add More Ratio Data  
