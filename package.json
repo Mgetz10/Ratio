@@ -29,7 +29,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "rsync -avz ./build/ twoninc@two-n.com:/home/twoninc/prototypes.two-n.com/ratio"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +52,6 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.26"
-  }
+  },
+  "homepage": "."
 }

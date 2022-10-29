@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] Refactor to use join instead of useEffect return  
 - [ ] Transitions  
 - [ ] Diff charts  
 - [ ] Make 'To Ratio' Functions  
