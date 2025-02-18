@@ -1,87 +1,116 @@
 import { useEffect, useRef } from 'react';
-import { arc as d3Arc, InternSet, pie as d3Pie, range, select } from 'd3';
+import { arc as d3Arc, pie as d3Pie, range, select } from 'd3';
 import { PieChartProps } from './types';
 import { colorMap } from '../../globals/constants';
 
-const PieChart = ({ formula }: PieChartProps) => {
-	const svgRef = useRef(null);
+interface ExtendedPieChartProps extends PieChartProps {
+  half?: boolean; // new prop for half-pie
+}
 
-	const width = 260;
-	const height = 260;
+const PieChart = ({ formula, half = false }: ExtendedPieChartProps) => {
+  const svgRef = useRef<SVGSVGElement | null>(null);
 
-	const innerRadius = width * 0; // 0.15;
-	const stroke = innerRadius > 0 ? 'none' : 'white';
-	const outerRadius = Math.min(width, height) / 2;
-	const padAngle = stroke === 'none' ? 0 / outerRadius : 0;
-	const labelRadius = innerRadius * 0.2 + outerRadius * 0.65;
-	const strokeWidth = 3;
-	const strokeLinejoin = 'round';
-	useEffect(() => {
-		const N = formula.map(({ ingredient: name }) => name);
-		const V = formula.map(({ amount }) => amount);
-		const I = range(N.length).filter(i => !isNaN(V[i]));
+  const width = 260;
+  const height = half ? 130 : 260;
 
-		const title = (i: number) => `${N[i]}\n${V[i]} Parts`;
+  const innerRadius = 0;
+  const stroke = innerRadius > 0 ? 'none' : 'white';
+  const outerRadius = (half ? width : Math.min(width, height)) / 2;
+  const padAngle = stroke === 'none' ? 0 / outerRadius : 0;
+  const labelRadius = innerRadius * 0.2 + outerRadius * 0.65;
+  const strokeWidth = 3;
+  const strokeLinejoin = 'round';
 
-		// Construct arcs.
-		const arcs = d3Pie()
-			.padAngle(padAngle)
-			.sort(null)
-			.value(i => V[i as any])(I);
+  useEffect(() => {
+    const svgEl = select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', [
+        -width / 2,
+        half ? -height : -height / 2,
+        width,
+        height,
+      ])
+      .attr('style', 'max-width: 100%; height: auto; height: intrinsic;');
 
-		const arc = d3Arc().innerRadius(innerRadius).outerRadius(outerRadius);
-		const arcLabel = d3Arc().innerRadius(labelRadius).outerRadius(labelRadius);
+    // Data arrays
+    const N = formula.map(({ ingredient }) => ingredient);
+    const V = formula.map(({ amount }) => amount);
+    const validIndices = range(N.length).filter((i) => !isNaN(V[i]));
 
-		const svg = select(svgRef.current)
-			.attr('width', width)
-			.attr('height', height)
-			.attr('viewBox', [-width / 2, -height / 2, width, height])
-			.attr('style', 'max-width: 100%; height: auto; height: intrinsic;');
+    // Create the pie generator
+    const pieGenerator = d3Pie<number>()
+      .padAngle(padAngle)
+      .sort(null)
+      .value((i) => V[i]);
 
-		svg
-			.append('g')
-			.attr('stroke', stroke)
-			.attr('stroke-width', strokeWidth)
-			.attr('stroke-linejoin', strokeLinejoin)
-			.selectAll('path')
-			.data(arcs)
-			.join('path')
-			.attr('fill', d => colorMap(N[d.data as any]))
-			.attr('d', arc as any)
-			.append('title')
-			.text(d => title(d.data as any));
+    // If half = true, constrain angles to -π/2 ... π/2
+    if (half) {
+      pieGenerator.startAngle(-0.5 * Math.PI).endAngle(0.5 * Math.PI);
+    }
 
-		svg
-			.append('g')
-			.attr('font-family', 'sans-serif')
-			.attr('font-size', width * 0.07)
-			.attr('text-anchor', 'middle')
-			.selectAll('text')
-			.data(arcs)
-			.join('text')
-			.attr('transform', d => `translate(${arcLabel.centroid(d as any)})`)
-			.selectAll('tspan')
-			.data(d => {
-				const lines = `${title(d.data as any)}`.split(/\n/);
-				return d.endAngle - d.startAngle > 0.25 ? lines : lines.slice(0, 1);
-			})
-			.join('tspan')
-			.attr('x', 0)
-			.attr('y', (_, i) => `${i * 1.1}em`)
-			.attr('font-weight', (_, i) => (i ? null : 'bold'))
-			.style('text-transform', 'capitalize')
-			.style('fill', 'white')
-			.text(d => d);
+    const arcs = pieGenerator(validIndices);
 
-		return () => {
-			svg.selectAll('g').remove();
-		};
-	}, [formula]);
+    // Arc generators for the slices and the labels
+    const arcPath = d3Arc().innerRadius(innerRadius).outerRadius(outerRadius);
+    const arcLabel = d3Arc().innerRadius(labelRadius).outerRadius(labelRadius);
 
-	return (
-		<div>
-			<svg ref={svgRef} />
-		</div>
-	);
+    // Draw arcs
+    const gArc = svgEl
+      .append('g')
+      .attr('stroke', stroke)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke-linejoin', strokeLinejoin);
+
+    gArc
+      .selectAll('path')
+      .data(arcs)
+      .join('path')
+      .attr('fill', (d) => colorMap(N[d.data]))
+      .attr('d', arcPath as any)
+      .append('title')
+      .text((d) => `${N[d.data]}\n${V[d.data]} Parts`);
+
+    // Draw text labels
+    const gText = svgEl
+      .append('g')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', width * 0.07)
+      .attr('text-anchor', 'middle');
+
+    gText
+      .selectAll('text')
+      .data(arcs)
+      .join('text')
+      .attr('transform', (d) => `translate(${arcLabel.centroid(d as any)})`)
+      .selectAll('tspan')
+      .data((d) => {
+        // Only show two lines if slice is large enough
+        const nameLine = N[d.data];
+        const valueLine = `${V[d.data]} Parts`;
+        return d.endAngle - d.startAngle > 0.25
+          ? [nameLine, valueLine]
+          : [nameLine];
+      })
+      .join('tspan')
+      .attr('x', 0)
+      .attr('y', (_, i) => `${i * 1.1}em`)
+      .attr('font-weight', (_, i) => (i ? null : 'bold'))
+      .style('text-transform', 'capitalize')
+      .style('fill', 'white')
+      .text((d) => d);
+
+    // Cleanup on unmount
+    return () => {
+      svgEl.selectAll('*').remove();
+    };
+  }, [formula, half]);
+
+  return (
+    <div>
+      <svg ref={svgRef} />
+    </div>
+  );
 };
+
 export default PieChart;

@@ -6,18 +6,23 @@ Project Description
 
 ### Todo
 
+- [ ] Diff mode: diff original ration against recipe  
+- [ ] make horizontal bars more dynamic  
+- [ ] Implement new UX (split into multiple tasks when design is clear)  
+- [ ] Come up with new UX design  
+- [ ] Percentage mode. ex: a way to see which has the greatest hydration  
+- [ ] Group create ingredient sub types/enums ex: FAT, FLOUR  
+- [ ] Add storybook with visual testing  
 - [ ] Transitions  
-- [ ] Diff charts  
-- [ ] Make 'To Ratio' Functions  
-- [ ] Add More Ratio Data  
-- [ ] Add testing for d3 components  
 
 ### In Progress
 
-- [ ] Handle multiple formula types  
 
 ### Done ✓
 
+- [x] Add More Ratio Data  
+- [x] Make 'To Ratio' Functions  
+- [x] Handle multiple formula types  
 - [x] Add Pie  
 - [x] Remove extra space from stacked bar  
 - [x] side ways stacked bar  

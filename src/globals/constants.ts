@@ -4,17 +4,17 @@ import { Ingredient } from './types';
 export const allIngredients = Object.values(Ingredient);
 
 const presetColor: string | any = {
-	[Ingredient.WATER]: '#30bced',
+  [Ingredient.WATER]: '#30bced',
 };
 
-export const colorMap = (ingredient: Ingredient) => {
-	const unsetIngredientColors = allIngredients.filter(
-		ing => !Object.keys(presetColor).includes(ing)
-	);
-	const hardCodedColor = presetColor[ingredient];
-	const dynamicColorMap = scaleOrdinal()
-		.domain(unsetIngredientColors)
-		.range(schemeSet2);
+export const colorMap = (ingredient: Ingredient | string) => {
+  const unsetIngredientColors = allIngredients.filter(
+    (ing) => !Object.keys(presetColor).includes(ing),
+  );
+  const hardCodedColor = presetColor[ingredient];
+  const dynamicColorMap = scaleOrdinal()
+    .domain(unsetIngredientColors)
+    .range(schemeSet2);
 
-	return hardCodedColor || dynamicColorMap(ingredient);
+  return hardCodedColor || dynamicColorMap(ingredient);
 };
